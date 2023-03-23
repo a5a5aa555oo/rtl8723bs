@@ -5,6 +5,7 @@
  *
  ******************************************************************************/
 
+#include <linux/version.h>
 #include <linux/etherdevice.h>
 #include <drv_types.h>
 #include <rtw_debug.h>
@@ -853,9 +854,16 @@ exit:
 	return ret;
 }
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 1, 0)
+static int cfg80211_rtw_add_key(struct wiphy *wiphy, struct net_device *ndev,
+				u8 key_index, bool pairwise,
+				const u8 *mac_addr, struct key_params *params)
+#else
 static int cfg80211_rtw_add_key(struct wiphy *wiphy, struct net_device *ndev,
 				int link_id, u8 key_index, bool pairwise,
 				const u8 *mac_addr, struct key_params *params)
+#endif
+
 {
 	char *alg_name;
 	u32 param_len;
@@ -935,18 +943,31 @@ addkey_end:
 
 }
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 1, 0)
+static int cfg80211_rtw_get_key(struct wiphy *wiphy, struct net_device *ndev,
+				u8 key_index, bool pairwise, const u8 *mac_addr, 
+				void *cookie, void (*callback)(void *cookie, struct key_params*))
+#else
 static int cfg80211_rtw_get_key(struct wiphy *wiphy, struct net_device *ndev,
 				int link_id, u8 key_index, bool pairwise,
 				const u8 *mac_addr, void *cookie,
 				void (*callback)(void *cookie,
 						 struct key_params*))
+#endif
+
 {
 	return 0;
 }
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 1, 0)
+static int cfg80211_rtw_del_key(struct wiphy *wiphy, struct net_device *ndev,
+				u8 key_index, bool pairwise, const u8 *mac_addr)
+#else
 static int cfg80211_rtw_del_key(struct wiphy *wiphy, struct net_device *ndev,
 				int link_id, u8 key_index, bool pairwise,
 				const u8 *mac_addr)
+#endif
+
 {
 	struct adapter *padapter = rtw_netdev_priv(ndev);
 	struct security_priv *psecuritypriv = &padapter->securitypriv;
@@ -959,10 +980,16 @@ static int cfg80211_rtw_del_key(struct wiphy *wiphy, struct net_device *ndev,
 	return 0;
 }
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 1, 0)
+static int cfg80211_rtw_set_default_key(struct wiphy *wiphy,
+	struct net_device *ndev, u8 key_index, bool unicast, 
+	bool multicast)
+#else
 static int cfg80211_rtw_set_default_key(struct wiphy *wiphy,
 	struct net_device *ndev, int link_id, u8 key_index
-	, bool unicast, bool multicast
-	)
+	, bool unicast, bool multicast)
+#endif
+
 {
 	struct adapter *padapter = rtw_netdev_priv(ndev);
 	struct security_priv *psecuritypriv = &padapter->securitypriv;
