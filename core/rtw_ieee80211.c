@@ -9,6 +9,8 @@
 #include <rtw_debug.h>
 #include <linux/of.h>
 #include <asm/unaligned.h>
+#include <linux/version.h>
+#include <osdep_service.h>
 
 u8 RTW_WPA_OUI_TYPE[] = { 0x00, 0x50, 0xf2, 1 };
 u16 RTW_WPA_VERSION = 1;
@@ -773,8 +775,12 @@ static int rtw_ieee802_11_parse_vendor_specific(u8 *pos, uint elen,
 	 * sub-type. */
 	if (elen < 4)
 		return -1;
-
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 7, 0))
+	oui = RTW_GET_BE24(pos);
+#else
 	oui = get_unaligned_be24(pos);
+#endif
+
 	switch (oui) {
 	case OUI_MICROSOFT:
 		/* Microsoft/Wi-Fi information elements are further typed and
