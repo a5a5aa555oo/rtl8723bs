@@ -8,6 +8,7 @@
 #include <drv_types.h>
 #include <rtw_debug.h>
 #include <rtl8723b_hal.h>
+#include <linux/version.h>
 
 static void initrecvbuf(struct recv_buf *precvbuf, struct adapter *padapter)
 {
@@ -215,11 +216,21 @@ static inline bool pkt_exceeds_tail(struct recv_priv *precvpriv,
 
 	return false;
 }
-
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 9, 0))
+static void rtl8723bs_recv_tasklet(unsigned long priv)
+#else
 static void rtl8723bs_recv_tasklet(struct tasklet_struct *t)
+#endif
+
 {
+
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 9, 0))
+	struct adapter *padapter;
+#else
 	struct adapter *padapter = from_tasklet(padapter, t,
 						recvpriv.recv_tasklet);
+#endif
+
 	struct hal_com_data *p_hal_data;
 	struct recv_priv *precvpriv;
 	struct recv_buf *precvbuf;
@@ -231,6 +242,7 @@ static void rtl8723bs_recv_tasklet(struct tasklet_struct *t)
 	struct sk_buff *pkt_copy = NULL;
 	u8 shift_sz = 0, rx_report_sz = 0;
 
+	padapter = (struct adapter *)priv;
 	p_hal_data = GET_HAL_DATA(padapter);
 	precvpriv = &padapter->recvpriv;
 	recv_buf_queue = &precvpriv->recv_buf_pending_queue;
@@ -421,7 +433,12 @@ s32 rtl8723bs_init_recv_priv(struct adapter *padapter)
 		goto initbuferror;
 
 	/* 3 2. init tasklet */
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 9, 0))
+	tasklet_init(&precvpriv->recv_tasklet, rtl8723bs_recv_tasklet,
+		(unsigned long)padapter);
+#else
 	tasklet_setup(&precvpriv->recv_tasklet, rtl8723bs_recv_tasklet);
+#endif
 
 	goto exit;
 
