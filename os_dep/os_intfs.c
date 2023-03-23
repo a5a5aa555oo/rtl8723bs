@@ -4,6 +4,7 @@
  * Copyright(c) 2007 - 2011 Realtek Corporation. All rights reserved.
  *
  ******************************************************************************/
+#include <linux/version.h>
 #include <drv_types.h>
 #include <rtw_debug.h>
 #include <hal_data.h>
@@ -791,7 +792,11 @@ static int _rtw_drv_register_netdev(struct adapter *padapter, char *name)
 	if (rtw_init_netdev_name(pnetdev, name))
 		return _FAIL;
 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 15, 0))
+	memcpy(pnetdev->dev_addr, padapter->eeprompriv.mac_addr, ETH_ALEN);
+#else
 	eth_hw_addr_set(pnetdev, padapter->eeprompriv.mac_addr);
+#endif
 
 	/* Tell the network stack we exist */
 	if (register_netdev(pnetdev) != 0) {
