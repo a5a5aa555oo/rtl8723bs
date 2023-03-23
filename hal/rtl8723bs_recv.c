@@ -242,7 +242,10 @@ static void rtl8723bs_recv_tasklet(struct tasklet_struct *t)
 	struct sk_buff *pkt_copy = NULL;
 	u8 shift_sz = 0, rx_report_sz = 0;
 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 9, 0))
 	padapter = (struct adapter *)priv;
+#endif
+
 	p_hal_data = GET_HAL_DATA(padapter);
 	precvpriv = &padapter->recvpriv;
 	recv_buf_queue = &precvpriv->recv_buf_pending_queue;
