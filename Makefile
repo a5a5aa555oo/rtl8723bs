@@ -1,13 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0
 
-KNL_VER ?= $(shell uname -r)
-KNL_SRC ?= /lib/modules/$(KNL_VER)/build
-MODDESTDIR :=  /lib/modules/$(KNL_VER)/kernel/drivers/staging/rtl8723bs
-
-EXTRA_CFLAGS += -I$(src)/include -I$(src)/hal
-EXTRA_CFLAGS += -O2
-
-EXTRA_LDFLAGS += --strip-debug
+ifneq ($(KERNELRELEASE),)
 
 r8723bs_git-y = \
 		core/rtw_ap.o \
@@ -72,24 +65,28 @@ r8723bs_git-y = \
 
 obj-m := r8723bs_git.o
 
-.PHONY: modules clean
+ccflags-y += -I$(src)/include -I$(src)/hal
+ccflags-y += -Wno-implicit-fallthrough
+ldflags-y += --strip-debug
+
+else
+
+KVER ?= $(shell uname -r)
+KDIR ?= /lib/modules/$(KVER)/build
 
 modules: 
-	make -C $(KNL_SRC) M=$(shell pwd)
+	make -C $(KDIR) M=$$PWD modules
 
 clean:
-	@find $(src) -name "*.o" | xargs rm -f
-	@find $(src) -name "*.cmd" | xargs rm -f
-	@rm -f r8723bs_git.ko
-	@rm -f modules.order
-	@rm -f Module.symvers
-	@rm -f r8723bs_git.mod
-	@rm -f r8723bs_git.mod.c
+	make -C $(KDIR) M=$$PWD clean
 
 install:
-	install -p -m 644 r8723bs_git.ko $(MODDESTDIR)
-	depmod -a $(KNL_VER)
+	make -C $(KDIR) M=$$PWD modules_install
+	echo blacklist r8723bs > /etc/modprobe.d/blacklist-r8723bs.conf
 
 uninstall:
-	rm -f $(MODDESTDIR)/r8723bs_git.ko
-	depmod -a $(KNL_VER)
+	rm -f /lib/modules/$(KVER)/extra/r8723bs_git.ko
+	rm -f /etc/modprobe.d/blacklist-r8723bs.conf
+	depmod -a $(KVER)
+
+endif
