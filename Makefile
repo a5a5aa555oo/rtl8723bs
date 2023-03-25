@@ -73,6 +73,8 @@ else
 
 KVER ?= $(shell uname -r)
 KDIR ?= /lib/modules/$(KVER)/build
+DESTDIR ?= /lib/modules/$(KVER)/kernel/drivers/staging/rtl8723bs
+BLCONF := /etc/modprobe.d/blacklist-r8723bs.conf
 
 modules: 
 	make -C $(KDIR) M=$$PWD modules
@@ -81,12 +83,13 @@ clean:
 	make -C $(KDIR) M=$$PWD clean
 
 install:
-	make -C $(KDIR) M=$$PWD modules_install
-	echo blacklist r8723bs > /etc/modprobe.d/blacklist-r8723bs.conf
+	install -p -m 644 r8723bs_git.ko $(DESTDIR)
+	echo blacklist r8723bs > $(BLCONF)
+	depmod -a $(KVER)
 
 uninstall:
-	rm -f /lib/modules/$(KVER)/extra/r8723bs_git.ko
-	rm -f /etc/modprobe.d/blacklist-r8723bs.conf
+	rm -f $(DESTDIR)/r8723bs_git.ko
+	rm -f $(BLCONF)
 	depmod -a $(KVER)
 
 endif
