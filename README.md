@@ -12,7 +12,9 @@ Backporting the RTL8723BS driver to the old kernels from the linux git tree.
 Supported linux kernel version: 5.4.x ~ 6.2.x
 
 Tested on the following linux distributions and it works fine.
+
 Debian 11.6 (kernel version: 5.10.0-21-amd64)
+
 Ubuntu 20.04 (kernel version: 5.4.0-144-generic)
 
 ### WARNING
