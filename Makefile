@@ -2,7 +2,7 @@
 
 ifneq ($(KERNELRELEASE),)
 
-r8723bs_git-y = \
+r8723bs_git-y := \
 		core/rtw_ap.o \
 		core/rtw_btcoex.o \
 	 	core/rtw_cmd.o \
@@ -65,31 +65,32 @@ r8723bs_git-y = \
 
 obj-m := r8723bs_git.o
 
-ccflags-y += -I$(src)/include -I$(src)/hal
-ccflags-y += -Wno-implicit-fallthrough
-ldflags-y += --strip-debug
+ccflags-y := -I$(src)/include -I$(src)/hal
+ldflags-y := --strip-debug
 
 else
 
-KVER ?= $(shell uname -r)
+KVER ?= `uname -r`
 KDIR ?= /lib/modules/$(KVER)/build
-DESTDIR ?= /lib/modules/$(KVER)/kernel/drivers/staging/rtl8723bs
+DESTDIR ?= /lib/modules/$(KVER)/extra
 BLCONF := /etc/modprobe.d/blacklist-r8723bs.conf
 
 modules: 
-	make -C $(KDIR) M=$$PWD modules
+	$(MAKE) -C $(KDIR) M=$$PWD modules
 
 clean:
-	make -C $(KDIR) M=$$PWD clean
+	$(MAKE) -C $(KDIR) M=$$PWD clean
 
 install:
+	@mkdir -pv $(DESTDIR)
 	install -p -m 644 r8723bs_git.ko $(DESTDIR)
 	echo blacklist r8723bs > $(BLCONF)
 	depmod -a $(KVER)
 
 uninstall:
-	rm -f $(DESTDIR)/r8723bs_git.ko
-	rm -f $(BLCONF)
+	@rm -vf $(DESTDIR)/r8723bs_git.ko
+	@rm -vf $(BLCONF)
 	depmod -a $(KVER)
+	@rmdir --ignore-fail-on-non-empty $(DESTDIR)
 
 endif
