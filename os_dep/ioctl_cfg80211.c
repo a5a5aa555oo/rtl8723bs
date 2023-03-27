@@ -5,7 +5,6 @@
  *
  ******************************************************************************/
 
-#include <linux/version.h>
 #include <linux/etherdevice.h>
 #include <drv_types.h>
 #include <rtw_debug.h>

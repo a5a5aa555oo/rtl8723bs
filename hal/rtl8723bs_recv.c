@@ -8,7 +8,6 @@
 #include <drv_types.h>
 #include <rtw_debug.h>
 #include <rtl8723b_hal.h>
-#include <linux/version.h>
 
 static void initrecvbuf(struct recv_buf *precvbuf, struct adapter *padapter)
 {
@@ -216,6 +215,7 @@ static inline bool pkt_exceeds_tail(struct recv_priv *precvpriv,
 
 	return false;
 }
+
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 9, 0))
 static void rtl8723bs_recv_tasklet(unsigned long priv)
 #else

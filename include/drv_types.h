@@ -14,6 +14,7 @@
 #ifndef __DRV_TYPES_H__
 #define __DRV_TYPES_H__
 
+#include <linux/version.h>
 #include <linux/sched/signal.h>
 #include <basic_types.h>
 #include <osdep_service.h>

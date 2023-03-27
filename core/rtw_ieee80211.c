@@ -9,8 +9,6 @@
 #include <rtw_debug.h>
 #include <linux/of.h>
 #include <asm/unaligned.h>
-#include <linux/version.h>
-#include <osdep_service.h>
 
 u8 RTW_WPA_OUI_TYPE[] = { 0x00, 0x50, 0xf2, 1 };
 u16 RTW_WPA_VERSION = 1;
