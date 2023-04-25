@@ -66,13 +66,12 @@ r8723bs_git-y := \
 obj-m := r8723bs_git.o
 
 ccflags-y := -I$(src)/include -I$(src)/hal
-ldflags-y := --strip-debug
 
 else
 
 KVER ?= `uname -r`
 KDIR ?= /lib/modules/$(KVER)/build
-DESTDIR ?= /lib/modules/$(KVER)/extra
+MODDIR ?= /lib/modules/$(KVER)/extra
 BLCONF := /etc/modprobe.d/blacklist-r8723bs.conf
 
 modules: 
@@ -82,15 +81,16 @@ clean:
 	$(MAKE) -C $(KDIR) M=$$PWD clean
 
 install:
-	@mkdir -pv $(DESTDIR)
-	install -p -m 644 r8723bs_git.ko $(DESTDIR)
+	@mkdir -pv $(MODDIR)
+	strip -g r8723bs_git.ko
+	install -p -m 644 r8723bs_git.ko $(MODDIR)
 	echo blacklist r8723bs > $(BLCONF)
 	depmod -a $(KVER)
 
 uninstall:
-	@rm -vf $(DESTDIR)/r8723bs_git.ko
+	@rm -vf $(MODDIR)/r8723bs_git.ko
 	@rm -vf $(BLCONF)
 	depmod -a $(KVER)
-	@rmdir --ignore-fail-on-non-empty $(DESTDIR)
+	@rmdir --ignore-fail-on-non-empty $(MODDIR)
 
 endif
