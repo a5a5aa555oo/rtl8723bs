@@ -30,6 +30,8 @@ Debian 11.6 (kernel version: 5.10.0-21-amd64)
 
 Ubuntu 20.04 (kernel version: 5.4.0-147-generic)
 
+Thanks to all the maintainers of this kernel module!
+
 ### WARNING
 
 No warranty, use at your own risk.

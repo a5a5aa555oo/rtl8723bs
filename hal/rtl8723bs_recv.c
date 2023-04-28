@@ -216,19 +216,19 @@ static inline bool pkt_exceeds_tail(struct recv_priv *precvpriv,
 	return false;
 }
 
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 9, 0))
-static void rtl8723bs_recv_tasklet(unsigned long priv)
-#else
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 9, 0))
 static void rtl8723bs_recv_tasklet(struct tasklet_struct *t)
+#else
+static void rtl8723bs_recv_tasklet(unsigned long priv)
 #endif
 
 {
 
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 9, 0))
-	struct adapter *padapter;
-#else
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 9, 0))
 	struct adapter *padapter = from_tasklet(padapter, t,
 						recvpriv.recv_tasklet);
+#else
+   struct adapter *padapter;
 #endif
 
 	struct hal_com_data *p_hal_data;
@@ -436,11 +436,11 @@ s32 rtl8723bs_init_recv_priv(struct adapter *padapter)
 		goto initbuferror;
 
 	/* 3 2. init tasklet */
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 9, 0))
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 9, 0))
+	tasklet_setup(&precvpriv->recv_tasklet, rtl8723bs_recv_tasklet);
+#else
 	tasklet_init(&precvpriv->recv_tasklet, rtl8723bs_recv_tasklet,
 		(unsigned long)padapter);
-#else
-	tasklet_setup(&precvpriv->recv_tasklet, rtl8723bs_recv_tasklet);
 #endif
 
 	goto exit;

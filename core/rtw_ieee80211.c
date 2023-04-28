@@ -773,10 +773,11 @@ static int rtw_ieee802_11_parse_vendor_specific(u8 *pos, uint elen,
 	 * sub-type. */
 	if (elen < 4)
 		return -1;
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 7, 0))
-	oui = RTW_GET_BE24(pos);
-#else
+
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 7, 0))
 	oui = get_unaligned_be24(pos);
+#else
+	oui = RTW_GET_BE24(pos);
 #endif
 
 	switch (oui) {
