@@ -81,9 +81,8 @@ clean:
 	$(MAKE) -C $(KDIR) M=$$PWD clean
 
 install:
-	@mkdir -pv $(MODDIR)
 	strip -g r8723bs_git.ko
-	install -p -m 644 r8723bs_git.ko $(MODDIR)
+	@install -Dvm 644 -t $(MODDIR) r8723bs_git.ko
 	echo blacklist r8723bs > $(BLCONF)
 	depmod -a $(KVER)
 
