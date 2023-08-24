@@ -228,7 +228,7 @@ static void rtl8723bs_recv_tasklet(unsigned long priv)
 	struct adapter *padapter = from_tasklet(padapter, t,
 						recvpriv.recv_tasklet);
 #else
-   struct adapter *padapter;
+	struct adapter *padapter;
 #endif
 
 	struct hal_com_data *p_hal_data;
@@ -440,7 +440,7 @@ s32 rtl8723bs_init_recv_priv(struct adapter *padapter)
 	tasklet_setup(&precvpriv->recv_tasklet, rtl8723bs_recv_tasklet);
 #else
 	tasklet_init(&precvpriv->recv_tasklet, rtl8723bs_recv_tasklet,
-		(unsigned long)padapter);
+			(unsigned long)padapter);
 #endif
 
 	goto exit;

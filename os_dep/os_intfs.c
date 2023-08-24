@@ -794,7 +794,7 @@ static int _rtw_drv_register_netdev(struct adapter *padapter, char *name)
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0))
 	eth_hw_addr_set(pnetdev, padapter->eeprompriv.mac_addr);
 #else
-   memcpy(pnetdev->dev_addr, padapter->eeprompriv.mac_addr, ETH_ALEN);
+	memcpy(pnetdev->dev_addr, padapter->eeprompriv.mac_addr, ETH_ALEN);
 #endif
 
 	/* Tell the network stack we exist */
